@@ -40,7 +40,7 @@ int setup_uinput_device()
 
   // Open the input device
   uinp_fd = open("/dev/uinput", O_WRONLY | O_NDELAY);
-  if (uinp_fd == NULL)
+  if (uinp_fd == 0)
   {
     printf("Unable to open /dev/uinput\n");
     return -1;
@@ -119,7 +119,7 @@ int main()
   }
   
   hid = open("/dev/usb/hiddev0", O_RDONLY);
-  if (hid == NULL)
+  if (hid == 0)
   {
     printf("Unable to open /dev/usb/hiddev0\n");
     return -1;
