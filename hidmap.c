@@ -122,15 +122,15 @@ int main()
   while (1) 
   {
     // if read succeeded
-    if ((tmp = read(hid, &(ev[rd/size]), size * EV_NUM - rd)) > 0) 
+    if ((tmp = read(hid, &(ev[rd/size]), size * NUM_EVENTS - rd)) > 0) 
     {
       rd += tmp;
       // read may only read a partial set of events.
       // therefore wait until we've read all three
-      if (rd == EV_NUM * size)
+      if (rd == NUM_EVENTS * size)
       {
         rd = 0;
-        for (j = 0; j < EV_NUM; j++) 
+        for (j = 0; j < NUM_EVENTS; j++) 
         {
           for (k = 0; k < 3; k++)
           {
