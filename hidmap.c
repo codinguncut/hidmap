@@ -22,6 +22,8 @@
 
 static int uinp_fd = -1;
 struct uinput_user_dev uinp;
+struct input_event event;
+
 
 int init_uinput()
 {
@@ -63,8 +65,6 @@ int init_uinput()
 // "value" (1 for down, 0 for up)
 void send_button(__u16 type, __u16 code, __s32 value)
 {
-  struct input_event event;
-
   memset(&event, 0, sizeof(event));
   gettimeofday(&event.time, NULL);
   event.type = type;
