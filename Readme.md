@@ -4,7 +4,7 @@ Reads foot pedal events from `/dev/usb/hiddev0` and translates them into `/dev/u
 
 # Requirements
 
-* uinput kernel support - In Ubuntu quantal it is compile in
+* uinput kernel support - In Ubuntu quantal it is compiled in by default
 
 ## Motivation
 
