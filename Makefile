@@ -1,2 +1,2 @@
-all: hid.c
-	gcc hid.c -o hid
+all: hidmap.c
+	gcc hidmap.c -o hidmap

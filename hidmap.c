@@ -4,7 +4,7 @@
 // and translates them into /dev/uinput keyboard events
 //
 // Johannes Ahlmann, 2012-12-21
-// Released under Modified MIT License
+// Released under MIT Expat License
 //
 // based on 
 //   http://www.einfochips.com/download/dash%5Fjan%5Ftip.pdf
@@ -14,31 +14,19 @@
 #include <string.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <linux/input.h>
 #include <linux/uinput.h>
-#include <linux/types.h>
 #include <linux/hiddev.h>
 
 // foot pedal sends 3 events for the three pedals
-#define EV_NUM 3
+#define NUM_EVENTS 3
 
-/* Globals */
 static int uinp_fd = -1;
 struct uinput_user_dev uinp;
 
-// uInput device structure
-struct input_event event; // Input device structure
-
-/* Setup the uinput device */
-int setup_uinput_device()
+int init_uinput()
 {
   int i=0;
 
-  // Open the input device
   uinp_fd = open("/dev/uinput", O_WRONLY | O_NDELAY);
   if (uinp_fd == 0)
   {
@@ -60,11 +48,10 @@ int setup_uinput_device()
     ioctl(uinp_fd, UI_SET_KEYBIT, i);
   }
 
-  /* Create input device into input sub-system */
   write(uinp_fd, &uinp, sizeof(uinp));
   if (ioctl(uinp_fd, UI_DEV_CREATE))
   {
-    printf("Unable to create UINPUT device.");
+    printf("Unable to create uinput device.");
     return -1;
   }
   return 1;
@@ -76,6 +63,8 @@ int setup_uinput_device()
 // "value" (1 for down, 0 for up)
 void send_button(__u16 type, __u16 code, __s32 value)
 {
+  struct input_event event;
+
   memset(&event, 0, sizeof(event));
   gettimeofday(&event.time, NULL);
   event.type = type;
@@ -107,12 +96,12 @@ int main()
 {
   int j,k,tmp,rd;
   int hid, flags;
-  struct hiddev_event ev[EV_NUM];
+  struct hiddev_event ev[NUM_EVENTS];
   char pedals[3]    = {0,0,0};
   int pedal_ids[3]  = {0x90001, 0x90002, 0x90003};
   int size          = sizeof(struct hiddev_event);
 
-  if (setup_uinput_device() < 0)
+  if (init_uinput() < 0)
   {
     printf("Unable to find uinput device\n");
     return -1;
@@ -162,10 +151,9 @@ int main()
 
   // TODO: need to catch signals to properly close file handles, etc.
 
-  close(hid);
-
-  /* Destroy the input device */
+  /* Destroy the uinput device */
   ioctl(uinp_fd, UI_DEV_DESTROY);
 
+  close(hid);
   close(uinp_fd);
 }
